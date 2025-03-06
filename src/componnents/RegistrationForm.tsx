@@ -3,39 +3,42 @@ import avatar from "../assets/avatar.png"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import { useForm } from 'react-hook-form'
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { googleSignin, RegisterData } from '../services/auth-service'
 import  AuthClient from '../services/auth-service'
 import { uploadPhoto } from '../services/file-service'
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google'
 
+const schema = z.object({
+    email: z.string().email("Invalid email format"),
+    username: z.string().min(3, "Username must be at least 3 characters"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    image: z.instanceof(FileList).optional(),
+  });
 
-interface formData {
-    email: string,
-    username: string,
-    password: string,
-    image: File[]
-}
+type FormData = z.infer<typeof schema>;
 
 const RegistrationForm: FC = () => {
     const [file, setFile] = useState<File | null>(null)
-    const { register, handleSubmit, watch } = useForm<formData>();
+    const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
+        resolver: zodResolver(schema),
+    });
     const image = watch("image")
     const inputFileRef: {current: HTMLInputElement | null} = {current: null}
 
     useEffect(() => {
-        if(image) {
-            console.log(image)
+        if(image && image.length > 0) {
             setFile(image[0])
         } // run at page creation and every time image changes
         
     }, [image]);
 
-    const onSubmit = async (data: formData) => {
+    const onSubmit = async (data: FormData) => {
         console.log("Form Data Before Sending:", data);
         let imgUrl = ""
-        if (data.image[0]) {
+        if (data.image && data.image.length > 0) {
             imgUrl = await uploadPhoto(data.image[0])
-
         }
         
         const regData: RegisterData = {
@@ -66,7 +69,6 @@ const RegistrationForm: FC = () => {
             console.log(err)
         }
         
-
     }
     const onGoogleLoginFailure = () => {
         console.log("Google login Failed")
@@ -75,33 +77,6 @@ const RegistrationForm: FC = () => {
     const {ref, ...rest} = register("image")
 
     return (
-        // <form style={{
-        //     width: "100vw", 
-        //     height: "100vh", 
-        //     background: "",
-        //     display: "flex",
-        //     justifyContent: "center",
-        //     alignItems: "center"
-        //     }}
-        //     onSubmit={handleSubmit(onSubmit)}>
-
-        //     <div className="d-flex flex-column" style={{backgroundColor: "lightgray", padding: '20px', borderRadius: '10px'}}>
-        //         <div className='mb-3' style={{alignSelf: "center"}}>StoryBox</div>
-        //         <div style={{display: 'flex', justifyContent: 'center', position: 'relative'}}>
-        //             <img src={file?URL.createObjectURL(file) : avatar} alt='' style={{width: '150px', height: '150px', alignSelf: 'center'}}/>
-        //             <FontAwesomeIcon onClick={() => {inputFileRef.current?.click()}} icon={faCamera} className="fa-xl" style={{position: 'absolute', bottom: '0', right: '0'}}/>
-        //         </div>
-        //         <input {...rest} ref={(e) => { ref(e); inputFileRef.current = e }} type="file" className='mb-3' accept='image/jpeg, image/png' style={{display: 'none'}}/>
-        //         <label>email:</label>
-        //         <input {...register("email")} type="text" placeholder='email' className='mb-3'/>
-        //         <label>password:</label>
-        //         <input {...register("password")} type="password" placeholder='passsword' className='mb-3'/>
-        //         <label>user name:</label>
-        //         <input {...register("username")} type="text" placeholder='username' className='mb-3'/>
-        //         <button type='submit' className='btn btn-outline-primary mb-3'>Register</button>
-        //         < GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginFailure}/>
-        //     </div>
-        // </form>
     <form className="d-flex justify-content-center align-items-center min-vh-100 bg-light" onSubmit={handleSubmit(onSubmit)}>
       <div className="card p-4 shadow" style={{ width: "350px" }}>
         <h2 className="text-center font-weight-bold mb-3">StoryBox</h2>
@@ -112,12 +87,7 @@ const RegistrationForm: FC = () => {
           <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginFailure} />
         </div>
         <div className="text-center text-muted mb-2">OR</div>
-          {/* <div style={{display: 'flex', justifyContent: 'center', position: 'relative'}}>
-            <img src={file?URL.createObjectURL(file) : avatar} alt='' style={{width: '150px', height: '150px', alignSelf: 'center'}}/>
-            <FontAwesomeIcon onClick={() => {inputFileRef.current?.click()}} icon={faImage} className="fa-xl" style={{position: 'absolute', bottom: '0', right: '0'}}/>
-          </div>
-          <input {...rest} ref={(e) => { ref(e); inputFileRef.current = e }} type="file" className='mb-3' accept='image/jpeg, image/png' style={{display: 'none'}}/> */}
-                  <div className="d-flex justify-content-center position-relative mb-3">
+        <div className="d-flex justify-content-center position-relative mb-3">
           <img 
             src={file ? URL.createObjectURL(file) : avatar} 
             alt="Profile Avatar" 
@@ -139,6 +109,7 @@ const RegistrationForm: FC = () => {
             {...register("email")}
             required
           />
+          {errors.email && <p className="text-danger small">{errors.email.message}</p>}
           <input
             type="password"
             placeholder="Password"
@@ -146,6 +117,7 @@ const RegistrationForm: FC = () => {
             {...register("password")}
             required
           />
+          {errors.password && <p className="text-danger small">{errors.password.message}</p>}
           <input
             type="text"
             placeholder="Username"
@@ -153,6 +125,7 @@ const RegistrationForm: FC = () => {
             {...register("username")}
             required
           />
+          {errors.username && <p className="text-danger small">{errors.username.message}</p>}
           <button type="submit" className="btn btn-primary w-100">Sign up</button>
       </div>
     </form>
