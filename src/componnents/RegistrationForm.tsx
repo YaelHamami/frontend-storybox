@@ -13,6 +13,8 @@ import AuthButton from "../auth/AuthButton";
 import AuthForm from "../auth/AuthForm";
 import ProfilePictureUploader from "../auth/ProfilePictureUploader";
 import axios from "axios";
+import AuthSwitchLink from "../auth/AuthSwitchLink";
+// import AuthSwitchLink from "../auth/AuthSwitchLink";
 
 const schema = z.object({
   email: z.string().email("Invalid email format"),
@@ -29,7 +31,7 @@ const RegistrationForm: FC = () => {
     handleSubmit, 
     watch, 
     setError, 
-    formState: { errors, isDirty, isSubmitting } 
+    formState: { errors } 
   } = useForm<FormData>({ resolver: zodResolver(schema) });
   
   const image = watch("image");
@@ -110,12 +112,8 @@ const RegistrationForm: FC = () => {
           </p>
         )}
 
-        {/* 🔹 Debugging: Show form state */}
-        {isSubmitting && <p className="text-center text-muted">Submitting...</p>}
-        {!isDirty && <p className="text-center text-muted">Fill in the form to register</p>}
-
-        
         <AuthButton label="Sign up" />
+        <AuthSwitchLink text="Have an account?" linkText="Sign in" to="/login" />
       </AuthCard>
     </AuthForm>
   );

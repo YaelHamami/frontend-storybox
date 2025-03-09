@@ -15,8 +15,7 @@ export interface RegistrationResponseData {
     profile_picture_uri?: string;
     is_connected?: boolean;
     gender?: string;
-  }
-
+}
 
 export interface RegisterData {
     userName: string;
@@ -33,11 +32,32 @@ export interface RegisterData {
     refreshToken?: string[];
 }
 
+export interface LoginResponseData {
+    _id: string;
+    accessToken: string;
+    refreshToken: string;
+}
+
+export interface LoginData{
+    email: string;
+    password: string;
+}
+
 const authRegister = (registration: RegisterData) => {
     console.log("Auth Registration")
     const controller = new AbortController();
     const request = apiClient.post<RegistrationResponseData>("/auth/register",
         registration,
+        { signal: controller.signal });
+
+  return { request, cancel: () => controller.abort() };
+};
+
+export const authLogin = (login: LoginData) => {
+    console.log("Auth Login")
+    const controller = new AbortController();
+    const request = apiClient.post<LoginResponseData>("/auth/login",
+        login,
         { signal: controller.signal });
 
   return { request, cancel: () => controller.abort() };
@@ -64,4 +84,4 @@ export const googleSignin = (credentialResponse: CredentialResponse) => {
 };
 
 
-export default { authRegister };
+export default { authRegister, authLogin, googleSignin };
