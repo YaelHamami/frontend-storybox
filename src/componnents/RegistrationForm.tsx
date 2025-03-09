@@ -1,135 +1,124 @@
-import {FC, useEffect, useState} from 'react'
-import avatar from "../assets/avatar.png"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCamera } from "@fortawesome/free-solid-svg-icons";
-import { useForm } from 'react-hook-form'
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { googleSignin, RegisterData } from '../services/auth-service'
-import  AuthClient from '../services/auth-service'
-import { uploadPhoto } from '../services/file-service'
-import { CredentialResponse, GoogleLogin } from '@react-oauth/google'
+import { FC } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { googleSignin, RegisterData } from "../services/auth-service";
+import AuthClient from "../services/auth-service";
+import { uploadPhoto } from "../services/file-service";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+
+import AuthCard from "../auth/AuthCard";
+import AuthInput from "../auth/AuthInput";
+import AuthButton from "../auth/AuthButton";
+import AuthForm from "../auth/AuthForm";
+import ProfilePictureUploader from "../auth/ProfilePictureUploader";
+import axios from "axios";
 
 const schema = z.object({
-    email: z.string().email("Invalid email format"),
-    username: z.string().min(3, "Username must be at least 3 characters"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    image: z.instanceof(FileList).optional(),
-  });
+  email: z.string().email("Invalid email format"),
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  image: z.instanceof(FileList).optional(),
+});
 
 type FormData = z.infer<typeof schema>;
 
 const RegistrationForm: FC = () => {
-    const [file, setFile] = useState<File | null>(null)
-    const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
-        resolver: zodResolver(schema),
-    });
-    const image = watch("image")
-    const inputFileRef: {current: HTMLInputElement | null} = {current: null}
+  const { 
+    register, 
+    handleSubmit, 
+    watch, 
+    setError, 
+    formState: { errors, isDirty, isSubmitting } 
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
+  
+  const image = watch("image");
 
-    useEffect(() => {
-        if(image && image.length > 0) {
-            setFile(image[0])
-        } // run at page creation and every time image changes
-        
-    }, [image]);
+  const onSubmit = async (data: FormData) => {
+    let imgUrl = "";
+    if (data.image && data.image.length > 0) {
+      imgUrl = await uploadPhoto(data.image[0]);
+    }
 
-    const onSubmit = async (data: FormData) => {
-        console.log("Form Data Before Sending:", data);
-        let imgUrl = ""
-        if (data.image && data.image.length > 0) {
-            imgUrl = await uploadPhoto(data.image[0])
-        }
-        
-        const regData: RegisterData = {
-            email: data.email,
-            userName: data.username,
-            password: data.password,
-            profile_picture_uri: imgUrl
-        };
-        try{
-            const { request } = AuthClient.authRegister(regData);
-            request.then(res => {
-                console.log(res);
-            }).catch(err => {
-                console.log(err);
-            });
-        } catch (error) {
-            console.error("Error submitting form:", error);
-        }
+    const regData: RegisterData = {
+      email: data.email,
+      userName: data.username,
+      password: data.password,
+      profile_picture_uri: imgUrl,
     };
 
-    const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
-        try {
-            console.log(credentialResponse)
-            const response = await googleSignin(credentialResponse)
-            console.log(response)
-            
-        } catch (err) {
-            console.log(err)
+    try {
+      const { request } = AuthClient.authRegister(regData);
+      await request
+      request.then(console.log).catch(console.error);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+
+      if (axios.isAxiosError(error) && error.response) {
+        const errorMessage = error.response.data?.message || "Registration failed";
+  
+        console.log("🔹 Server Error Message:", errorMessage); // Debugging
+  
+        // 🔹 Ensure a visible error message in all cases
+        if (axios.isAxiosError(error) && error.response) {
+          const errorMessage = error.response.data?.message || "Registration failed";
+          console.log("🔹 Server Error Message:", errorMessage);
+    
+          // Automatically assign the error based on server response
+          if (errorMessage.toLowerCase().includes("email")) {
+            setError("email", { type: "server", message: errorMessage });
+          } else if (errorMessage.toLowerCase().includes("user name")) {
+            setError("username", { type: "server", message: errorMessage });
+          } else {
+            setError("root", { type: "server", message: errorMessage });
+          }
+        } else {
+          setError("root", { type: "server", message: "Something went wrong. Please try again later." });
         }
-        
+      }
     }
-    const onGoogleLoginFailure = () => {
-        console.log("Google login Failed")
+  };
+
+  const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
+    try {
+      console.log(credentialResponse);
+      const response = await googleSignin(credentialResponse);
+      console.log(response);
+    } catch (err) {
+      console.error(err);
     }
+  };
 
-    const {ref, ...rest} = register("image")
-
-    return (
-    <form className="d-flex justify-content-center align-items-center min-vh-100 bg-light" onSubmit={handleSubmit(onSubmit)}>
-      <div className="card p-4 shadow" style={{ width: "350px" }}>
-        <h2 className="text-center font-weight-bold mb-3">StoryBox</h2>
-        <p className="text-center text-muted">
-          Sign up to see stories from your friends.
-        </p>
+  return (
+    <AuthForm onSubmit={handleSubmit(onSubmit)}>
+      <AuthCard title="StoryBox" subtitle="Sign up to see stories from your friends.">
         <div className="d-flex justify-content-center mb-3">
-          <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginFailure} />
+          <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={() => console.error("Google login failed")} />
         </div>
         <div className="text-center text-muted mb-2">OR</div>
-        <div className="d-flex justify-content-center position-relative mb-3">
-          <img 
-            src={file ? URL.createObjectURL(file) : avatar} 
-            alt="Profile Avatar" 
-            className="rounded-circle border shadow" 
-            style={{ width: "120px", height: "120px", objectFit: "cover" }} 
-          />
-          <FontAwesomeIcon 
-            onClick={() => inputFileRef.current?.click()} 
-            icon={faCamera} 
-            className="position-absolute bg-white p-2 rounded-circle shadow" 
-            style={{ bottom: "0", right: "10px", cursor: "pointer", fontSize: "1.2rem" }}
-          />
-        </div>
-        <input {...rest} ref={(e) => { ref(e); inputFileRef.current = e; }} type="file" className="d-none" accept="image/jpeg, image/png" />
-          <input
-            type="email"
-            placeholder="Email"
-            className="form-control mb-2"
-            {...register("email")}
-            required
-          />
-          {errors.email && <p className="text-danger small">{errors.email.message}</p>}
-          <input
-            type="password"
-            placeholder="Password"
-            className="form-control mb-2"
-            {...register("password")}
-            required
-          />
-          {errors.password && <p className="text-danger small">{errors.password.message}</p>}
-          <input
-            type="text"
-            placeholder="Username"
-            className="form-control mb-2"
-            {...register("username")}
-            required
-          />
-          {errors.username && <p className="text-danger small">{errors.username.message}</p>}
-          <button type="submit" className="btn btn-primary w-100">Sign up</button>
-      </div>
-    </form>
-    )
-}
+        
+        <ProfilePictureUploader watchImage={image} register={register("image")} />
+        
+        <AuthInput type="email" placeholder="Email" register={register("email")} error={errors.email?.message} />
+        <AuthInput type="password" placeholder="Password" register={register("password")} error={errors.password?.message} />
+        <AuthInput type="text" placeholder="Username" register={register("username")} error={errors.username?.message} />
 
-export default RegistrationForm
+        {/* Only show root error if there is no input-specific error */}
+        {errors.root?.message && !errors.email?.message && !errors.username?.message && (
+          <p className="text-danger text-center mt-3" style={{ fontSize: "14px", fontWeight: "500" }}>
+            {errors.root.message}
+          </p>
+        )}
+
+        {/* 🔹 Debugging: Show form state */}
+        {isSubmitting && <p className="text-center text-muted">Submitting...</p>}
+        {!isDirty && <p className="text-center text-muted">Fill in the form to register</p>}
+
+        
+        <AuthButton label="Sign up" />
+      </AuthCard>
+    </AuthForm>
+  );
+};
+
+export default RegistrationForm;
