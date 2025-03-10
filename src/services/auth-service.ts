@@ -43,45 +43,66 @@ export interface LoginData{
     password: string;
 }
 
-const authRegister = (registration: RegisterData) => {
-    console.log("Auth Registration")
-    const controller = new AbortController();
-    const request = apiClient.post<RegistrationResponseData>("/auth/register",
-        registration,
-        { signal: controller.signal });
+export const authLogin = async (login: LoginData) => {
+    console.log("Auth Login");
 
-  return { request, cancel: () => controller.abort() };
+    try {
+        const response = await apiClient.post<LoginResponseData>("/auth/login", login);
+        
+        if (response.data.accessToken && response.data.refreshToken) {
+            localStorage.setItem("accessToken", response.data.accessToken);
+            localStorage.setItem("refreshToken", response.data.refreshToken);
+        }
+
+        return response.data;
+    } catch (error) {
+        console.error("Login error:", error);
+        throw error;
+    }
 };
 
-export const authLogin = (login: LoginData) => {
-    console.log("Auth Login")
-    const controller = new AbortController();
-    const request = apiClient.post<LoginResponseData>("/auth/login",
-        login,
-        { signal: controller.signal });
+export const authRegister = async (registration: RegisterData) => {
+    console.log("Auth Registration");
 
-  return { request, cancel: () => controller.abort() };
+    try {
+        const response = await apiClient.post<RegistrationResponseData>("/auth/register", registration);
+        return response.data;
+        
+    } catch (error) {
+        console.error("Registration error:", error);
+        throw error;
+    }
 };
 
 export const googleSignin = (credentialResponse: CredentialResponse) => {
     return new Promise<IUser>((resolve, reject) => {
         console.log("Google Signin Payload:", { credential: credentialResponse });
-        
+
         if (!credentialResponse.credential) {
             console.error("Google Signin Error: No credential received.");
             reject("Missing Google credential");
             return;
         }
-        apiClient.post("/auth/google", { credential: credentialResponse.credential})
-        .then((response) => {
-            console.log("Google Signin Response:", response);
-            resolve(response.data);
-        }).catch((error) => {
-            console.log("Google Signin Error:", error);
-            reject(error);
-        });
+
+        apiClient
+            .post("/auth/google", { credential: credentialResponse.credential })
+            .then((response) => {
+                console.log("Google Signin Response:", response);
+
+                if (response.data.accessToken && response.data.refreshToken) {
+                    localStorage.setItem("accessToken", response.data.accessToken);
+                    localStorage.setItem("refreshToken", response.data.refreshToken);
+                }
+
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log("Google Signin Error:", error);
+                reject(error);
+            });
     });
 };
+
 
 
 export default { authRegister, authLogin, googleSignin };

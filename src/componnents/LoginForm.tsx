@@ -33,7 +33,7 @@ const LoginForm: FC = () => {
   const onSubmit = async (data: LoginFormData
   ) => {
     try {
-      const { request } = AuthClient.authLogin(data);
+      const request = AuthClient.authLogin(data);
       await request;
       console.log("✅ Login successful!");
     } catch (error) {
