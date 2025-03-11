@@ -1,24 +1,20 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import userService, { IUser } from "../services/user-service";
 import postService, { Post } from "../services/post-service";
 import BaseContainer from "../components/BaseContainer";
-import UserProfileHeader from "../components/UserProfileHeader";
 import PostCard from "../components/PostCard";
+import userService from "../services/user-service";
 
-const UserProfile = () => {
-  const { userId } = useParams<{ userId: string }>();
-  const [user, setUser] = useState<IUser | null>(null);
+const HomePage = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [postsWithUsers, setPostsWithUsers] = useState([]);
+
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
-        const userResponse = await userService.getUserById(userId!).request;
-        setUser(userResponse.data);
-        const postResponse = await postService.fetchPaginatedPosts(1, userId).request;
+        const postResponse = await postService.fetchPaginatedPosts(1).request;
         setPosts(postResponse.data.posts);
       } catch (error) {
         console.error("Error fetching user profile or posts:", error);
@@ -26,15 +22,27 @@ const UserProfile = () => {
         setLoading(false);
       }
     };
+    fetchUserData();
+  }, []);
 
-    if (userId) fetchUserData();
-  }, [userId]);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const updatedPosts = await Promise.all(
+        posts.map(async (post) => {
+          const userResponse = await userService.getUserById(post.ownerId).request;
+          return { ...post, username: userResponse.data.userName, userImage: userResponse.data.profile_picture_uri };
+        })
+      );
+      setPostsWithUsers(updatedPosts);
+    };
+
+    fetchUsers();
+  }, [posts]);
 
   return (
     <BaseContainer>
-      {user && <UserProfileHeader user={user} />}
-      
-      <h4 className="mb-3">Posts</h4>
+    
+    <h4 className="mb-3 text-center">Home Page</h4>
 
       {/* Show loading message while fetching */}
       {loading ? (
@@ -45,8 +53,8 @@ const UserProfile = () => {
       ) : (
         /* If posts exist, display them */
         <div className="row">
-          {posts.map(post => (
-            <PostCard key={post._id} post={post} username={user!.userName} userImage={user!.profile_picture_uri} showEditButton={true} />
+          {postsWithUsers.map(post => (
+            <PostCard key={post._id} post={post} username={post!.username} userImage={post!.profile_picture_uri} showEditButton={false} />
           ))}
         </div>
       )}
@@ -54,4 +62,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default HomePage;
