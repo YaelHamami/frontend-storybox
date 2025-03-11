@@ -8,10 +8,10 @@ import { uploadPhoto } from "../services/file-service";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 import AuthCard from "../auth/AuthCard";
-import AuthInput from "../auth/AuthInput";
+import AuthInput from "../components/InputField";
 import AuthButton from "../auth/AuthButton";
-import AuthForm from "../auth/AuthForm";
-import ProfilePictureUploader from "../auth/ProfilePictureUploader";
+import AuthForm from "../components/Form";
+import ProfilePictureUploader from "../components/ProfilePictureUploader";
 import axios from "axios";
 import AuthSwitchLink from "../auth/AuthSwitchLink";
 import { useNavigate } from "react-router-dom";
@@ -101,7 +101,16 @@ const RegistrationForm: FC = () => {
     try {
       console.log(credentialResponse);
       const response = await googleSignin(credentialResponse);
-      console.log(response);
+
+      const userId = response?._id;
+
+      // Navigate to user profile if ID exists
+      if (userId) {
+        navigate(`/profile/${userId}`);
+      } else {
+        console.error("Failed to retrieve user ID after Google login.");
+      }
+
     } catch (err) {
       console.error(err);
     }
