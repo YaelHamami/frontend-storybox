@@ -11,6 +11,7 @@ import AuthButton from "../auth/AuthButton";
 import AuthForm from "../components/Form";
 import axios from "axios";
 import AuthSwitchLink from "../auth/AuthSwitchLink";
+import { useNavigate } from "react-router-dom";
 
 // Define validation schema
 const schema = z.object({
@@ -21,6 +22,8 @@ const schema = z.object({
 type LoginFormData = z.infer<typeof schema>;
 
 const LoginForm: FC = () => {
+  const navigate = useNavigate();
+
   const { 
     register, 
     handleSubmit, 
@@ -33,8 +36,16 @@ const LoginForm: FC = () => {
   ) => {
     try {
       const request = AuthClient.authLogin(data);
-      await request;
+      const loginResponse = await request;
       console.log("Login successful!");
+
+      const userId = loginResponse._id;
+
+      if (userId) {
+        navigate(`/profile/${userId}`);
+      } else {
+        console.error("Failed to retrieve user ID after login.");
+      }
     } catch (error) {
       console.error("Login Error:", error);
 
@@ -59,7 +70,15 @@ const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
     try {
         console.log(credentialResponse);
         const response = await googleSignin(credentialResponse);
-        console.log(response);
+        const userId = response?._id;
+
+        // Navigate to user profile if ID exists
+        if (userId) {
+          navigate(`/profile/${userId}`);
+        } else {
+          console.error("Failed to retrieve user ID after Google login.");
+        }
+
     } catch (err) {
         console.error(err);
     }
