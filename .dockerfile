@@ -18,12 +18,19 @@ RUN npm run build
 
 # Step 2: Serve the React app using Nginx
 FROM nginx:alpine
+	
+# Copy custom Nginx config for HTTPS
+COPY nginx.conf /etc/nginx/nginx.conf
+# Copy SSL certificates into the container
+COPY certs/nginx.crt /etc/nginx/nginx.crt
+COPY certs/nginx.key /etc/nginx/nginx.key
 
 # Copy the build output from the previous stage to Nginx's public directory
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Expose port 80 for serving the app
-EXPOSE 80
+	
+# Expose ports for HTTP (80) and HTTPS (443)
+EXPOSE 80 443
 
 # Use the default Nginx configuration to serve the app
 CMD ["nginx", "-g", "daemon off;"]
@@ -39,7 +46,7 @@ CMD ["nginx", "-g", "daemon off;"]
 #    docker run -p 80:80 my-react-app
 
 # 3. To run the container in the background (detached mode):
-#    docker run -d -p 80:80 my-react-app
+# docker run -p 80:80 -p 443:443 my-react-app
 
 # 4. To check if your app is running, visit:
 #    http://your-server-ip or http://your-domain.com (if DNS is set up)
