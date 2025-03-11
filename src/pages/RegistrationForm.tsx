@@ -8,13 +8,12 @@ import { uploadPhoto } from "../services/file-service";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 import AuthCard from "../auth/AuthCard";
-import AuthInput from "../auth/AuthInput";
+import AuthInput from "../components/InputField";
 import AuthButton from "../auth/AuthButton";
-import AuthForm from "../auth/AuthForm";
-import ProfilePictureUploader from "../auth/ProfilePictureUploader";
+import AuthForm from "../components/Form";
+import ProfilePictureUploader from "../components/ProfilePictureUploader";
 import axios from "axios";
 import AuthSwitchLink from "../auth/AuthSwitchLink";
-// import AuthSwitchLink from "../auth/AuthSwitchLink";
 
 const schema = z.object({
   email: z.string().email("Invalid email format"),
@@ -59,9 +58,9 @@ const RegistrationForm: FC = () => {
       if (axios.isAxiosError(error) && error.response) {
         const errorMessage = error.response.data?.message || "Registration failed";
   
-        console.log("🔹 Server Error Message:", errorMessage); // Debugging
+        console.log("Server Error Message:", errorMessage); // Debugging
   
-        // 🔹 Ensure a visible error message in all cases
+        // Ensure a visible error message in all cases
         if (axios.isAxiosError(error) && error.response) {
           const errorMessage = error.response.data?.message || "Registration failed";
           console.log("🔹 Server Error Message:", errorMessage);
@@ -99,7 +98,9 @@ const RegistrationForm: FC = () => {
         </div>
         <div className="text-center text-muted mb-2">OR</div>
         
-        <ProfilePictureUploader watchImage={image} register={register("image")} />
+        <ProfilePictureUploader 
+        watchImage={image} 
+        register={register("image")} />
         
         <AuthInput type="email" placeholder="Email" register={register("email")} error={errors.email?.message} />
         <AuthInput type="password" placeholder="Password" register={register("password")} error={errors.password?.message} />

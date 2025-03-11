@@ -6,14 +6,13 @@ import AuthClient, { googleSignin } from "../services/auth-service";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 import AuthCard from "../auth/AuthCard";
-import AuthInput from "../auth/AuthInput";
+import AuthInput from "../components/InputField";
 import AuthButton from "../auth/AuthButton";
-import AuthForm from "../auth/AuthForm";
-// import AuthSwitchLink from "../auth/AuthSwitchLink";
+import AuthForm from "../components/Form";
 import axios from "axios";
 import AuthSwitchLink from "../auth/AuthSwitchLink";
 
-// 🔹 Define validation schema
+// Define validation schema
 const schema = z.object({
   email: z.string().email("Invalid email format"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -29,15 +28,15 @@ const LoginForm: FC = () => {
     formState: { errors } 
   } = useForm<LoginFormData>({ resolver: zodResolver(schema) });
 
-  // 🔹 Handle form submission
+  // Handle form submission
   const onSubmit = async (data: LoginFormData
   ) => {
     try {
       const request = AuthClient.authLogin(data);
       await request;
-      console.log("✅ Login successful!");
+      console.log("Login successful!");
     } catch (error) {
-      console.error("❌ Login Error:", error);
+      console.error("Login Error:", error);
 
       if (axios.isAxiosError(error) && error.response) {
         const errorMessage = error.response.data?.message || "Login failed";
@@ -55,7 +54,7 @@ const LoginForm: FC = () => {
     }
   };
 
-  // 🔹 Handle Google Sign-In
+  // Handle Google Sign-In
 const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
     try {
         console.log(credentialResponse);
@@ -74,21 +73,21 @@ const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
         </div>
         <div className="text-center text-muted mb-2">OR</div>
 
-        {/* 🔹 Email & Password Inputs */}
+        {/* Email & Password Inputs */}
         <AuthInput type="email" placeholder="Email" register={register("email")} error={errors.email?.message} />
         <AuthInput type="password" placeholder="Password" register={register("password")} error={errors.password?.message} />
 
-        {/* 🔹 Display General Server Errors */}
+        {/* Display General Server Errors */}
         {errors.root?.message && (
           <p className="text-danger text-center mt-3" style={{ fontSize: "14px", fontWeight: "500" }}>
             {errors.root.message}
           </p>
         )}
 
-        {/* 🔹 Login Button */}
+        {/* Login Button */}
         <AuthButton label="Log in" />
 
-        {/* 🔹 Switch to Registration Page */}
+        {/* Switch to Registration Page */}
         <AuthSwitchLink text="Don't have an account?" linkText="Sign up" to="/register" />
       </AuthCard>
     </AuthForm>
