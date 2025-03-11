@@ -8,12 +8,13 @@ import { uploadPhoto } from "../services/file-service";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 import AuthCard from "../auth/AuthCard";
-import AuthInput from "../components/InputField";
+import AuthInput from "../auth/AuthInput";
 import AuthButton from "../auth/AuthButton";
-import AuthForm from "../components/Form";
-import ProfilePictureUploader from "../components/ProfilePictureUploader";
+import AuthForm from "../auth/AuthForm";
+import ProfilePictureUploader from "../auth/ProfilePictureUploader";
 import axios from "axios";
 import AuthSwitchLink from "../auth/AuthSwitchLink";
+import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
   email: z.string().email("Invalid email format"),
@@ -25,6 +26,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const RegistrationForm: FC = () => {
+  const navigate = useNavigate();
   const { 
     register, 
     handleSubmit, 
@@ -49,18 +51,33 @@ const RegistrationForm: FC = () => {
     };
 
     try {
-      const request = AuthClient.authRegister(regData);
-      await request
-      request.then(console.log).catch(console.error);
+      const registerRequest = AuthClient.authRegister(regData);
+      await registerRequest;
+      registerRequest.then(console.log).catch(console.error);
+      console.log("Registration successful! Logging in...");
+
+      const loginData = { email: data.email, password: data.password };
+      const loginRequest = AuthClient.authLogin(loginData);
+      const loginResponse = await loginRequest;
+
+      console.log("Login successful! Navigating to profile...");
+
+      const userId = loginResponse._id;
+
+      if (userId) {
+        navigate(`/profile/${userId}`);
+      } else {
+        console.error("Failed to retrieve user ID after login.");
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
 
       if (axios.isAxiosError(error) && error.response) {
         const errorMessage = error.response.data?.message || "Registration failed";
   
-        console.log("Server Error Message:", errorMessage); // Debugging
+        console.log("🔹 Server Error Message:", errorMessage); // Debugging
   
-        // Ensure a visible error message in all cases
+        // 🔹 Ensure a visible error message in all cases
         if (axios.isAxiosError(error) && error.response) {
           const errorMessage = error.response.data?.message || "Registration failed";
           console.log("🔹 Server Error Message:", errorMessage);
@@ -98,9 +115,7 @@ const RegistrationForm: FC = () => {
         </div>
         <div className="text-center text-muted mb-2">OR</div>
         
-        <ProfilePictureUploader 
-        watchImage={image} 
-        register={register("image")} />
+        <ProfilePictureUploader watchImage={image} register={register("image")} />
         
         <AuthInput type="email" placeholder="Email" register={register("email")} error={errors.email?.message} />
         <AuthInput type="password" placeholder="Password" register={register("password")} error={errors.password?.message} />
