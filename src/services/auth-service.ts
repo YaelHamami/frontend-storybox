@@ -103,6 +103,33 @@ export const googleSignin = (credentialResponse: CredentialResponse) => {
     });
 };
 
+export const authLogout = async () => {
+    console.log("Auth Logout");
+
+    try {
+        const refreshToken = localStorage.getItem("refreshToken");
+
+        if (!refreshToken) {
+            console.warn("No refresh token found in localStorage.");
+            return;
+        }
+
+        const response = await apiClient.post("/auth/logout", { refreshToken });
+
+        if (response.status === 200) {
+            console.log("Logout successful!");
+
+            // 🔹 Clear local storage
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+        } else {
+            console.error("Logout failed:", response.data);
+        }
+    } catch (error) {
+        console.error("Logout error:", error);
+        throw error;
+    }
+};
 
 
-export default { authRegister, authLogin, googleSignin };
+export default { authRegister, authLogin, googleSignin, authLogout };
