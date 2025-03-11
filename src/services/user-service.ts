@@ -51,7 +51,7 @@ export const updateUser = (userId: string, updatedUserData: Partial<IUser>) => {
     {
       signal: controller.signal,
       headers: {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2NmZTExNGVhMTI5Y2QzMjI2ZTAwM2IiLCJyYW5kb20iOiIwLjQ5NzY5MDE1MTM4NDcyMjUiLCJpYXQiOjE3NDE3MDQ1NDUsImV4cCI6MTc0MjMwOTM0NX0.na56_bb1SUdilU-nOOgTunk3xyo0lwKscICGoGy7BDI`, // Attach token
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // Attach token
       },
     }
   );
