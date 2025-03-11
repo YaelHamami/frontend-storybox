@@ -8,6 +8,7 @@ interface PostCardProps {
   post: Post;
   username: string;
   userImage?: string;
+  showEditButton?: boolean;
 }
 
 const formatDateTime = (date?: string | Date) => {
@@ -23,7 +24,7 @@ const formatDateTime = (date?: string | Date) => {
 };
 
 
-const PostCard = ({ post, username, userImage }: PostCardProps) => {
+const PostCard = ({ post, username, userImage, showEditButton }: PostCardProps) => {
   return (
     <div className="col-md-4 mb-3">
       <div className="card shadow-sm position-relative">
@@ -34,9 +35,11 @@ const PostCard = ({ post, username, userImage }: PostCardProps) => {
           <strong className="flex-grow-1">{username}</strong>
 
           {/* Three-Dot Menu */}
-          <button className="btn p-0" style={{ background: "none", border: "none", cursor: "pointer" }}>
+          {showEditButton && (
+           <button className="btn p-0" style={{ background: "none", border: "none", cursor: "pointer" }}>
             <FontAwesomeIcon icon={faEllipsis} className="text-muted" size="lg" />
-          </button>
+           </button>
+          )}
         </div>
 
         {/* Post Image */}
