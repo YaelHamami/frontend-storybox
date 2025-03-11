@@ -1,6 +1,6 @@
 import apiClient, { CanceledError } from "./api-client";
 
-export { CanceledError }
+export { CanceledError };
 
 export interface IUser {
     _id?: string;
@@ -17,53 +17,61 @@ export interface IUser {
     provider?: string | null;
     gender?: string | null;
     refreshToken?: string[];
-  }
-
-export const getAllUsers = () => {
-    const abortController = new AbortController();
-    const request = apiClient.get<IUser[]>('/users', { signal: abortController.signal })
-    
-    return { request, abort: () => abortController.abort() }
 }
 
+// Get all users
+export const getAllUsers = () => {
+    const abortController = new AbortController();
+    const request = apiClient.get<IUser[]>('/users', { signal: abortController.signal });
+    
+    return { request, abort: () => abortController.abort() };
+};
+
+// Get user by ID
 export const getUserById = (id: string) => {
-  const abortController = new AbortController();
-  const request = apiClient.get<IUser>(`/users/${id}`, { signal: abortController.signal });
+    const abortController = new AbortController();
+    const request = apiClient.get<IUser>(`/users/${id}`, { signal: abortController.signal });
 
-  return { request, abort: () => abortController.abort() };
+    return { request, abort: () => abortController.abort() };
 };
 
-// Update User by ID
-// export const updateUser = (id: string, updatedUserData: Partial<IUser>) => {
-//   const abortController = new AbortController();
-//   const request = apiClient.put<IUser>(`/users/${id}`, updatedUserData, { signal: abortController.signal });
+// Get current logged-in user
+export const getCurrentUser = () => {
+    const abortController = new AbortController();
+    const request = apiClient.get<IUser>('/users/me', { 
+        signal: abortController.signal,
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Attach token
+        },
+    });
 
-//   return { request, abort: () => abortController.abort() };
-// };
+    return { request, abort: () => abortController.abort() };
+};
 
+// Update user by ID
 export const updateUser = (userId: string, updatedUserData: Partial<IUser>) => {
-  console.log(`Updating user with ID: ${userId}`);
+    console.log(`Updating user with ID: ${userId}`);
   
-  const controller = new AbortController();
-  const request = apiClient.put<IUser>(
-    `/users/${userId}`,
-    updatedUserData,
-    {
-      signal: controller.signal,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`, // Attach token
-      },
-    }
-  );
-  return { request, cancel: () => controller.abort() };
+    const controller = new AbortController();
+    const request = apiClient.put<IUser>(
+        `/users/${userId}`,
+        updatedUserData,
+        {
+            signal: controller.signal,
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`, // Attach token
+            },
+        }
+    );
+    return { request, cancel: () => controller.abort() };
 };
 
-// Delete User by ID
+// Delete user by ID
 export const deleteUser = (id: string) => {
-  const abortController = new AbortController();
-  const request = apiClient.delete<{ _id: string }>(`/users/${id}`, { signal: abortController.signal });
+    const abortController = new AbortController();
+    const request = apiClient.delete<{ _id: string }>(`/users/${id}`, { signal: abortController.signal });
 
-  return { request, abort: () => abortController.abort() };
+    return { request, abort: () => abortController.abort() };
 };
 
-export default { getAllUsers, getUserById, updateUser, deleteUser };
+export default { getAllUsers, getUserById, getCurrentUser, updateUser, deleteUser };
