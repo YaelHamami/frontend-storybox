@@ -22,5 +22,48 @@ export interface IUser {
 export const getAllUsers = () => {
     const abortController = new AbortController();
     const request = apiClient.get<IUser[]>('/users', { signal: abortController.signal })
+    
     return { request, abort: () => abortController.abort() }
 }
+
+export const getUserById = (id: string) => {
+  const abortController = new AbortController();
+  const request = apiClient.get<IUser>(`/users/${id}`, { signal: abortController.signal });
+
+  return { request, abort: () => abortController.abort() };
+};
+
+// Update User by ID
+// export const updateUser = (id: string, updatedUserData: Partial<IUser>) => {
+//   const abortController = new AbortController();
+//   const request = apiClient.put<IUser>(`/users/${id}`, updatedUserData, { signal: abortController.signal });
+
+//   return { request, abort: () => abortController.abort() };
+// };
+
+export const updateUser = (userId: string, updatedUserData: Partial<IUser>) => {
+  console.log(`Updating user with ID: ${userId}`);
+  
+  const controller = new AbortController();
+  const request = apiClient.put<IUser>(
+    `/users/${userId}`,
+    updatedUserData,
+    {
+      signal: controller.signal,
+      headers: {
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2NmZTExNGVhMTI5Y2QzMjI2ZTAwM2IiLCJyYW5kb20iOiIwLjQ5NzY5MDE1MTM4NDcyMjUiLCJpYXQiOjE3NDE3MDQ1NDUsImV4cCI6MTc0MjMwOTM0NX0.na56_bb1SUdilU-nOOgTunk3xyo0lwKscICGoGy7BDI`, // Attach token
+      },
+    }
+  );
+  return { request, cancel: () => controller.abort() };
+};
+
+// Delete User by ID
+export const deleteUser = (id: string) => {
+  const abortController = new AbortController();
+  const request = apiClient.delete<{ _id: string }>(`/users/${id}`, { signal: abortController.signal });
+
+  return { request, abort: () => abortController.abort() };
+};
+
+export default { getAllUsers, getUserById, updateUser, deleteUser };
