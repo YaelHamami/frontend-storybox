@@ -49,7 +49,7 @@ const RegistrationForm: FC = () => {
     };
 
     try {
-      const { request } = AuthClient.authRegister(regData);
+      const request = AuthClient.authRegister(regData);
       await request
       request.then(console.log).catch(console.error);
     } catch (error) {
