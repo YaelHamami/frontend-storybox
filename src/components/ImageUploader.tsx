@@ -64,7 +64,7 @@ const ImageUploader: FC<ImageUploaderProps> = ({
             <input
               type="file"
               className="d-none"
-              accept="image/*"
+              accept="image/jpeg, image/png"
               {...register("image")}
             />
           </label>
