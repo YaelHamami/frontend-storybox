@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -101,6 +103,11 @@ const EditProfile = () => {
   return (
     <BaseContainer>
       <div className="d-flex flex-column align-items-center">
+      <div className="position-absolute" style={{  backgroundColor: "transparent", left: "calc(50% - 250px)" }}>
+        <button className="btn border-0" onClick={() => navigate(`/profile/${userId}`)}>
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </button>
+      </div>
         <h3 className="mb-4 fw-bold">Edit Profile</h3>
         <ProfilePictureUploader 
           watchImage={imageFile || profileImage } 
