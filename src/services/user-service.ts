@@ -33,13 +33,6 @@ export const getUserById = (id: string) => {
   return { request, abort: () => abortController.abort() };
 };
 
-// Update User by ID
-// export const updateUser = (id: string, updatedUserData: Partial<IUser>) => {
-//   const abortController = new AbortController();
-//   const request = apiClient.put<IUser>(`/users/${id}`, updatedUserData, { signal: abortController.signal });
-
-//   return { request, abort: () => abortController.abort() };
-// };
 
 export const updateUser = (userId: string, updatedUserData: Partial<IUser>) => {
   console.log(`Updating user with ID: ${userId}`);

@@ -59,7 +59,8 @@ const AddPostPage: FC = () => {
       }
       
       const postData = { content: data.content, image_uri: imgUrl };
-      await createPost(postData);
+      const response = await createPost(postData);
+      console.log(response)
       alert("Post added successfully!");
       reset();
       setPreviewImage(null);
