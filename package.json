@@ -6,16 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:prod": "tsc -b && vite build --mode production",
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "serve -s dist -l 3000",
     "start:pm2": "pm2 start 'serve -s dist -l 3000' --name StoryBox-Client --watch",
     "start:iptables": "sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3000",
-    "deploy": "npm run build && npm run start:pm2 && npm run start:iptables",
-    "predeploy": "npm run build",
-    "deployCheck": "gh-pages -d dist",
-    "init": "npm install"
+    "deploy": "npm run build && npm run start:pm2 && npm run start:iptables"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
@@ -28,6 +24,7 @@
     "pm2": "^5.4.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-easy-crop": "^5.4.1",
     "react-hook-form": "^7.54.2",
     "react-router-dom": "^7.3.0",
     "zod": "^3.24.2"
@@ -40,7 +37,6 @@
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
-    "gh-pages": "^6.3.0",
     "globals": "^15.15.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",

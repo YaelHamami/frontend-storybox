@@ -45,14 +45,21 @@ export const fetchPostById = (id: string) => {
   };
   
   // Create a new post
-  export const createPost = (post: { title: string; content: string }) => {
-    console.log("Creating a new post...");
-    const controller = new AbortController();
-    const request = apiClient.post<Post>("/posts", post, { signal: controller.signal });
-  
-    return { request, cancel: () => controller.abort() };
-  };
-  
+  export const createPost = (post: { content: string, image_uri: string }) => {
+  console.log("Creating a new post...");
+  const controller = new AbortController();
+
+  const request = apiClient.post<Post>("/posts", post, {
+    signal: controller.signal,
+    headers: {
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2NmZTExNGVhMTI5Y2QzMjI2ZTAwM2IiLCJyYW5kb20iOiIwLjM1MDgzOTQzODkzNjAwOTY2IiwiaWF0IjoxNzQxNzkzOTYyLCJleHAiOjE3NDIzOTg3NjJ9.fgAam4GHn3maNF_xQhlhqadoI_dwSYnk--tC4nJLBkk`, // Pass JWT token here
+      // Authorization: `Bearer ${localStorage.getItem("token")}`, // Pass JWT token here
+    }
+  });
+
+  return { request, cancel: () => controller.abort() };
+};
+
   // Update an existing post by ID
   export const updatePost = (id: string, updatedPostData: Partial<Post>) => {
     console.log(`Updating post with ID: ${id}`);
