@@ -77,7 +77,7 @@ const UserProfile = () => {
       ) : (
         <div className="row">
           {posts.map(post => (
-            <PostCard key={post._id} post={post} username={user!.userName} userImage={user!.profile_picture_uri} />
+            <PostCard key={post._id} post={post} username={user!.userName} userImage={user!.profile_picture_uri} showEditButton={true} />
           ))}
         </div>
       )}
