@@ -5,6 +5,7 @@ import RegistrationForm from './pages/RegistrationForm'
 import UserProfile from './pages/UserProfile'
 import EditProfile from './pages/EditProfile'
 import AddPost from "./pages/AddPost"
+import HomePage from './pages/HomePage'
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
       <Route path="/profile/:userId" element={<UserProfile />} />
       <Route path="/profile/:userId/edit" element={<EditProfile />} />
       <Route path="/add-post" element={<AddPost />} />
+      <Route path="/home" element={<HomePage />} />
     </Routes>
     </>
   )
