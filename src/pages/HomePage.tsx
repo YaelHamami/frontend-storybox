@@ -54,7 +54,7 @@ const HomePage = () => {
         /* If posts exist, display them */
         <div className="row">
           {postsWithUsers.map(post => (
-            <PostCard key={post._id} post={post} username={post!.username} userImage={post!.profile_picture_uri} showEditButton={false} />
+            <PostCard key={post._id} post={post} username={post!.username} userImage={post!.profile_picture_uri}/>
           ))}
         </div>
       )}

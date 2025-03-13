@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faComment, faEllipsis, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faComment, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import ProfilePicture from "./ProiflePicture";
 import { Post } from "../services/post-service";
 import { addComment, fetchCommentsByPostId, Comment } from "../services/comments-service";
@@ -27,13 +27,15 @@ const formatDateTime = (date?: string | Date) => {
   }).format(new Date(date));
 };
 
-const PostCard = ({ post, username, userImage, showEditButton}: PostCardProps) => {
+const PostCard = ({ post, username, userImage }: PostCardProps) => {
   const [showModal, setShowModal] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [commentsWithUsers, setcommentsWithUsers] = useState([]);
   const [commentCount, setCommentCount] = useState(post.comment_count);
+  const [showFullTags, setShowFullTags] = useState(false);
 
+  const toggleTags = () => setShowFullTags(!showFullTags);
 
   useEffect(() => {
     if (showModal) {
@@ -76,6 +78,8 @@ const PostCard = ({ post, username, userImage, showEditButton}: PostCardProps) =
     }
   };
 
+  const showEditButton = (post.ownerId === localStorage.getItem("userId"));
+
   return (
     <>
       <div className="col-md-4 mb-3">
@@ -117,12 +121,25 @@ const PostCard = ({ post, username, userImage, showEditButton}: PostCardProps) =
 
             {/* Tags */}
             {post.tags?.length ? (
-              <div className="mt-1">
-                {post.tags.map((tag, index) => (
-                  <small key={index} className="text-primary me-2">#{tag}</small>
-                ))}
-              </div>
-            ) : null}
+             <div 
+             className="mt-1 text-primary"
+               style={{
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+             WebkitLineClamp: showFullTags ? "unset" : 2,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              cursor: "pointer",
+              whiteSpace: showFullTags ? "normal" : "nowrap",
+              }}
+              onClick={toggleTags}
+                >
+             {post.tags.map((tag, index) => (
+             <small key={index} className="me-2">#{tag}</small>
+             ))}
+         </div>
+        ) : null}
+
 
             {/* Like & Comment Section */}
             <div className="d-flex align-items-center mt-2" style={{ gap: "15px" }}>

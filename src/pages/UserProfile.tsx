@@ -46,7 +46,7 @@ const UserProfile = () => {
         /* If posts exist, display them */
         <div className="row">
           {posts.map(post => (
-            <PostCard key={post._id} post={post} username={user!.userName} userImage={user!.profile_picture_uri} showEditButton={true} />
+            <PostCard key={post._id} post={post} username={user!.userName} userImage={user!.profile_picture_uri} />
           ))}
         </div>
       )}
