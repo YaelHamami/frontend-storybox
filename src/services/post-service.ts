@@ -2,14 +2,15 @@ import apiClient from "./api-client";
 
 export interface Post {
   _id: string;
-  title: string;
+ // title?: string;
   content: string;
   ownerId: string;
   image_uri?: string;
   created_at?: Date;
   tags?: string[];
-  like_count?: number;
-  comment_count?: number;
+  like_count: number;
+  comment_count: number;
+  isLikedByMe: boolean; 
 }
 
 export interface PaginatedPostsResponse {

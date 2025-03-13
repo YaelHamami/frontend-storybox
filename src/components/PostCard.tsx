@@ -4,6 +4,7 @@ import { faHeart, faComment, faEllipsis, faTimes } from "@fortawesome/free-solid
 import ProfilePicture from "./ProiflePicture";
 import { Post } from "../services/post-service";
 import { addComment, fetchCommentsByPostId, Comment } from "../services/comments-service";
+import { addLike, removeLike } from "../services/like-service";
 import defaultPhoto from "../assets/OIP.png";
 import userService from "../services/user-service";
 import { Link } from "react-router-dom";
@@ -33,6 +34,8 @@ const PostCard = ({ post, username, userImage, showEditButton}: PostCardProps) =
   const [newComment, setNewComment] = useState("");
   const [commentsWithUsers, setcommentsWithUsers] = useState([]);
   const [commentCount, setCommentCount] = useState(post.comment_count);
+  const [isLiked, setIsLiked] = useState<boolean>(post.isLikedByMe);
+  const [likeCount, setLikeCount] = useState<number>(post.like_count);
 
 
   useEffect(() => {
@@ -73,6 +76,32 @@ const PostCard = ({ post, username, userImage, showEditButton}: PostCardProps) =
       setCommentCount(commentCount + 1);
     } catch (error) {
       console.error("Error adding comment:", error);
+    }
+  };
+
+  const handleLike = async () => {
+    if (isLiked) {
+      setIsLiked(false);
+      setLikeCount((prev) => Math.max(prev - 1, 0));
+
+      try {
+        await removeLike(post._id).request;
+      } catch (error) {
+        console.error("Error unliking post:", error);
+        setIsLiked(true);
+        setLikeCount((prev) => prev + 1);
+      }
+    } else {
+      setIsLiked(true);
+      setLikeCount((prev) => prev + 1);
+
+      try {
+        await addLike(post._id).request;
+      } catch (error) {
+        console.error("Error liking post:", error);
+        setIsLiked(false);
+        setLikeCount((prev) => Math.max(prev - 1, 0));
+      }
     }
   };
 
@@ -126,10 +155,10 @@ const PostCard = ({ post, username, userImage, showEditButton}: PostCardProps) =
 
             {/* Like & Comment Section */}
             <div className="d-flex align-items-center mt-2" style={{ gap: "15px" }}>
-              <button className="btn d-flex align-items-center p-0" style={{ border: "none", background: "none", cursor: "pointer" }}>
-                <FontAwesomeIcon icon={faHeart} className="text-danger me-1" />
-                <span>{post.like_count}</span>
-              </button>
+            <button className="btn d-flex align-items-center p-0" style={{ border: "none", background: "none", cursor: "pointer" }} onClick={handleLike}>
+              <FontAwesomeIcon icon={faHeart} className={isLiked ? "text-danger me-1" : "text-muted me-1"} />
+              <span>{likeCount}</span>
+            </button>
 
               {/* Open Comments Popup Button */}
               <button className="btn d-flex align-items-center p-0" style={{ border: "none", background: "none", cursor: "pointer" }}
