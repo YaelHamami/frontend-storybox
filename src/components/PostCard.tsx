@@ -6,6 +6,7 @@ import { Post } from "../services/post-service";
 import { addComment, fetchCommentsByPostId, Comment } from "../services/comments-service";
 import defaultPhoto from "../assets/OIP.png";
 import userService from "../services/user-service";
+import { Link } from "react-router-dom";
 
 interface PostCardProps {
   post: Post;
@@ -80,16 +81,20 @@ const PostCard = ({ post, username, userImage, showEditButton}: PostCardProps) =
       <div className="col-md-4 mb-3">
         <div className="card shadow-sm position-relative">
           {/* Post Header */}
-          <div className="d-flex align-items-center px-3 py-2" style={{ backgroundColor: "#fff", borderBottom: "1px solid #ddd" }}>
-            <ProfilePicture imageUrl={userImage} size={25} />
-            <strong className="flex-grow-1">{username}</strong>
+          <div className="d-flex align-items-center justify-content-between px-3 py-2" style={{ backgroundColor: "#fff", borderBottom: "1px solid #ddd" }}>
+  
+           {/* Profile Picture & Username */}
+           <Link to={`/profile/${post.ownerId}`} className="d-flex align-items-center text-decoration-none text-dark">
+             <ProfilePicture imageUrl={userImage} size={25} />
+             <strong className="ms-2">{username}</strong>
+            </Link>
 
-            {/* Three-Dot Menu */}
-            {showEditButton && (
-              <button className="btn p-0" style={{ background: "none", border: "none", cursor: "pointer" }}>
-                <FontAwesomeIcon icon={faEllipsis} className="text-muted" size="lg" />
-              </button>
-            )}
+           {/* Three-Dot Menu (Aligned Right) */}
+           {showEditButton && (
+           <button className="btn p-0 ms-auto" style={{ background: "none", border: "none", cursor: "pointer" }}>
+            <FontAwesomeIcon icon={faEllipsis} className="text-muted" size="lg" />
+           </button>
+           )}
           </div>
 
           {/* Post Image */}
