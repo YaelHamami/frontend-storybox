@@ -38,7 +38,7 @@ export const getUserById = (id: string) => {
 // Get current logged-in user
 export const getCurrentUser = () => {
     const abortController = new AbortController();
-    const request = apiClient.get<IUser>('/users/me', { 
+    const request = apiClient.get<IUser>('/users/self/me', { 
         signal: abortController.signal,
         headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`, // Attach token

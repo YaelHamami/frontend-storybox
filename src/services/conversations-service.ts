@@ -6,14 +6,16 @@ export { CanceledError };
 export interface IConversation {
     _id: string;
     participants: IUser[];
-    messages: IMessage[];
+    messages?: IMessage[];
+    lastMessage?: IMessage;
 }
 
 export interface IMessage {
     _id: string;
-    sender: IUser;
-    content: string;
+    senderId: string;
+    text: string;
     timestamp: string;
+    isRead: boolean;
 }
 
 // Get all conversations of the logged-in user
@@ -42,6 +44,19 @@ export const getConversationById = (conversationId: string) => {
     return { request, abort: () => abortController.abort() };
 };
 
+// Delete a conversation by ID
+export const deleteConversation = (conversationId: string) => {
+    const abortController = new AbortController();
+    const request = apiClient.delete(`/conversations/${conversationId}`, {
+        signal: abortController.signal,
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+    });
+
+    return { request, abort: () => abortController.abort() };
+};
+
 // Start or get a conversation between two users
 export const startConversation = (recipientId: string) => {
     const abortController = new AbortController();
@@ -55,17 +70,20 @@ export const startConversation = (recipientId: string) => {
     return { request, abort: () => abortController.abort() };
 };
 
-// Send a message in a conversation
-export const sendMessage = (conversationId: string, content: string) => {
+export const sendMessage = (conversationId: string, senderId: string, text: string) => {
     const abortController = new AbortController();
-    const request = apiClient.post<IMessage>(`/conversations/${conversationId}/messages`, { content }, {
+    const request = apiClient.post<IMessage>(
+      `/conversations/${conversationId}/messages`,
+      { senderId, text }, // ✅ Fix here: Correct field names
+      {
         signal: abortController.signal,
         headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-    });
-
+      }
+    );
+  
     return { request, abort: () => abortController.abort() };
-};
+  };
 
-export default { getConversations, getConversationById, startConversation, sendMessage };
+export default { getConversations, getConversationById, startConversation, sendMessage, deleteConversation };

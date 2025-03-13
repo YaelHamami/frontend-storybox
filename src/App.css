@@ -1,0 +1,25 @@
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full screen height */
+    width : 100%
+  }
+  
+  .chat-box {
+    flex-grow: 1; /* Takes up all available space */
+    overflow-y: auto; /* Scrollable messages */
+    padding: 10px;
+    margin-bottom: 60px;
+  }
+  
+  .chat-input {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border-top: 1px solid #ddd;
+    padding: 10px;
+    display: flex;
+  }
+  
