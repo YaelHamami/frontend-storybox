@@ -16,7 +16,7 @@ function App() {
       <Route path="/" element={<Navigate replace to="/login" />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/register" element={<RegistrationForm />} />
-      <Route path="/profile/:userId" element={<UserProfile />} />
+      <Route path="/profile/" element={<UserProfile />} />
       <Route path="/profile/:userId/edit" element={<EditProfile />} />
       <Route path="/add-post" element={<AddPost />} />
       <Route path="/home" element={<HomePage />} />

@@ -38,6 +38,13 @@ export const getUserById = (id: string) => {
   return { request, abort: () => abortController.abort() };
 };
 
+export const getMe = () => {
+  const abortController = new AbortController();
+  const request = apiClient.get<IUser>(`users/self/me`, { signal: abortController.signal });
+
+  return { request, abort: () => abortController.abort() };
+};
+
 
 export const updateUser = (userId: string, updatedUserData: Partial<IUser>) => {
   console.log(`Updating user with ID: ${userId}`);
@@ -64,4 +71,4 @@ export const deleteUser = (id: string) => {
   return { request, abort: () => abortController.abort() };
 };
 
-export default { getAllUsers, getUserById, updateUser, deleteUser };
+export default { getAllUsers, getUserById, updateUser, deleteUser, getMe };

@@ -12,7 +12,6 @@ interface PostCardProps {
   post: Post;
   username: string;
   userImage?: string;
-  showEditButton?: boolean;
 }
 
 const formatDateTime = (date?: string | Date) => {
@@ -34,6 +33,8 @@ const PostCard = ({ post, username, userImage }: PostCardProps) => {
   const [commentsWithUsers, setcommentsWithUsers] = useState<Comment | withUser []>([]);
   const [commentCount, setCommentCount] = useState(post.comment_count);
   const [showFullTags, setShowFullTags] = useState(false);
+  const [showEditButton, setShowEditButton] = useState(false);
+
   const navigate = useNavigate();
 
   const toggleTags = () => setShowFullTags(!showFullTags);
@@ -79,7 +80,19 @@ const PostCard = ({ post, username, userImage }: PostCardProps) => {
     }
   };
 
-  const showEditButton = (post.ownerId === localStorage.getItem("userId"));
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const myUser = await userService.getMe().request;
+        setShowEditButton(myUser.data._id === post.ownerId);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+  
+    fetchUser();
+  }, []); // Dependency array remains empty if it runs only on mount
+  
 
   return (
     <>
