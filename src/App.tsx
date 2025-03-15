@@ -8,6 +8,7 @@ import EditProfile from './pages/EditProfile';
 import HomePage from './pages/HomePage';
 import NavBar from './components/NavBar'; // Import the NavBar component
 import AddPost from './pages/AddPost';
+import EditPostPage from './pages/EditPost';
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
         <Route path="/profile/:userId/edit" element={<EditProfile />} />
         <Route path="/profile/" element={<UserProfile />} />
         <Route path="/addPost" element={<AddPost />} />
+        <Route path="/edit-post/:postId" element={<EditPostPage />} />
       </Routes>
     </>
   );
