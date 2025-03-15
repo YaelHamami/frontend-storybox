@@ -5,8 +5,8 @@ import ProfilePicture from "./ProiflePicture";
 import { Post } from "../services/post-service";
 import { addComment, fetchCommentsByPostId, Comment } from "../services/comments-service";
 import defaultPhoto from "../assets/OIP.png";
-import userService from "../services/user-service";
-import { Link } from "react-router-dom";
+import userService, { withUser } from "../services/user-service";
+import { Link, useNavigate } from "react-router-dom";
 
 interface PostCardProps {
   post: Post;
@@ -31,9 +31,10 @@ const PostCard = ({ post, username, userImage }: PostCardProps) => {
   const [showModal, setShowModal] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [commentsWithUsers, setcommentsWithUsers] = useState([]);
+  const [commentsWithUsers, setcommentsWithUsers] = useState<Comment | withUser []>([]);
   const [commentCount, setCommentCount] = useState(post.comment_count);
   const [showFullTags, setShowFullTags] = useState(false);
+  const navigate = useNavigate();
 
   const toggleTags = () => setShowFullTags(!showFullTags);
 
@@ -95,11 +96,15 @@ const PostCard = ({ post, username, userImage }: PostCardProps) => {
 
            {/* Three-Dot Menu (Aligned Right) */}
            {showEditButton && (
-           <button className="btn p-0 ms-auto" style={{ background: "none", border: "none", cursor: "pointer" }}>
-            <FontAwesomeIcon icon={faEllipsis} className="text-muted" size="lg" />
-           </button>
+            <button
+             className="btn p-0 ms-auto"
+             style={{ background: "none", border: "none", cursor: "pointer" }}
+             onClick={() => navigate(`/edit-post/${post._id}`)} // ✅ Navigate on click
+             >
+             <FontAwesomeIcon icon={faEllipsis} className="text-muted" size="lg" />
+            </button>
            )}
-          </div>
+           </div>
 
           {/* Post Image */}
           <div style={{ width: "100%", height: "200px", overflow: "hidden", backgroundColor: "#f0f0f0" }}>

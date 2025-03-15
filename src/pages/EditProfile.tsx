@@ -78,7 +78,7 @@ const EditProfile = () => {
       };
 
       await userService.updateUser(userId!, updatedUserData).request;
-      alert("Profile updated successfully!");
+      console.log("Profile updated successfully!");
       navigate(`/profile/${userId}`);
     } catch (error) {
       console.error("Error updating profile:", error);

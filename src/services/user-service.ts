@@ -19,6 +19,11 @@ export interface IUser {
     refreshToken?: string[];
   }
 
+  export interface withUser {
+    username: string
+    profile_picture_uri: string;
+  }
+
 export const getAllUsers = () => {
     const abortController = new AbortController();
     const request = apiClient.get<IUser[]>('/users', { signal: abortController.signal })

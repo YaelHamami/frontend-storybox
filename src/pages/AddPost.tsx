@@ -61,12 +61,13 @@ const AddPostPage: FC = () => {
       const postData = { content: data.content, image_uri: imgUrl };
       const response = await createPost(postData);
       console.log(response)
-      alert("Post added successfully!");
+      console.log("Post added successfully!");
       reset();
       setPreviewImage(null);
       setImageUri(null);
       setCrop({ x: 0, y: 0 });
       setZoom(1);
+      navigate(-1);
     } catch (error) {
       console.error("Error adding post:", error);
     } finally {

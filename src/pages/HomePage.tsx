@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import postService, { Post } from "../services/post-service";
 import BaseContainer from "../components/BaseContainer";
 import PostCard from "../components/PostCard";
-import userService from "../services/user-service";
+import userService, { withUser } from "../services/user-service";
 
 const HomePage = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [postsWithUsers, setPostsWithUsers] = useState([]);
+  const [postsWithUsers, setPostsWithUsers] = useState<Post | withUser []>([]);
 
 
   useEffect(() => {

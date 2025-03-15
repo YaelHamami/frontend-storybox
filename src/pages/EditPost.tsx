@@ -30,25 +30,22 @@ const EditPostPage: FC = () => {
   } = useForm<PostFormInputs>({ resolver: zodResolver(schema) });
 
   const [loading, setLoading] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | undefined>();
+  const [imageUri, setImageUri] = useState<string | undefined>();
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [content, setContent] = useState<string>();
 
   useEffect(() => {
     const fetchPost = async () => {
       if (!postId) return;
       try {
-        const post = await fetchPostById(postId);
+        const post = await fetchPostById(postId).request;
         if (post) {
-          // Populate the form fields with the fetched data
-          reset({
-            content: post.content,
-          });
-
-          setPreviewImage(post.image_uri);
-          setImageUri(post.image_uri);
+          setContent(post.data.content)
+          setPreviewImage(post.data.image_uri);
+          setImageUri(post.data.image_uri);
         }
       } catch (error) {
         console.error("Error fetching post:", error);
@@ -83,8 +80,8 @@ const EditPostPage: FC = () => {
 
       const postData = { content: data.content, image_uri: imgUrl };
       await updatePost(postId as string, postData);
-      alert("Post updated successfully!");
-      navigate(`/post/${postId}`);
+      console.log("Post updated successfully!");
+      navigate(-1);
     } catch (error) {
       console.error("Error updating post:", error);
     } finally {
@@ -115,7 +112,9 @@ const EditPostPage: FC = () => {
             handleSubmit={handleSubmit} 
             onSubmit={onSubmit} 
             errors={errors} 
-            loading={loading} 
+            loading={loading}
+            content={content}
+            isEdit={true}
           />
         </div>
       </div>

@@ -70,12 +70,25 @@ export const createPost = async (post: { content: string; image_uri: string }) =
 };
 
   // Update an existing post by ID
-  export const updatePost = (id: string, updatedPostData: Partial<Post>) => {
+  export const updatePost = async (id: string, updatedPostData: Partial<Post>) => {
     console.log(`Updating post with ID: ${id}`);
     const controller = new AbortController();
-    const request = apiClient.put<Post>(`/posts/${id}`, updatedPostData, { signal: controller.signal });
+
+    try {
+      // Fetch genres for the post content
+      if(updatedPostData.content){
+        const tags = await getGenres(updatedPostData.content);
+        updatedPostData.tags = tags
+      }
+    
+      const request = apiClient.put<Post>(`/posts/${id}`, updatedPostData, { signal: controller.signal });
+      return { request, cancel: () => controller.abort() };
+
+    } catch (error) {
+      console.error("Error creating post:", error);
+      throw error;
+    }
   
-    return { request, cancel: () => controller.abort() };
   };
   
   // Delete a post by ID
