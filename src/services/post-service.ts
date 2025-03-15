@@ -20,7 +20,7 @@ export interface PaginatedPostsResponse {
   totalPages: number;
 }
 
-//Fetch paginated posts (10 per request) or panging by userId
+//Fetch paginated posts (9 per request) or panging by userId
 const fetchPaginatedPosts = (page: number, sender?: string) => {
   console.log(`Fetching posts for page ${page}`);
   const controller = new AbortController();
