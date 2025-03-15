@@ -14,14 +14,4 @@ const BaseContainer = ({ children , className}: BaseContainerProps) => {
 };
 
 
-// interface BaseContainerProps {
-//   children: React.ReactNode;
-//   className?: string; // Allow className prop
-// }
-
-// const BaseContainer: React.FC<BaseContainerProps> = ({ children, className }) => {
-//   return <div className={`base-container ${className || ""}`}>{children}</div>;
-// };
-
-
 export default BaseContainer;
