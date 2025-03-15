@@ -1,5 +1,5 @@
 
-const getCroppedImg = async (imageSrc, croppedAreaPixels) => {
+const getCroppedImg = async (imageSrc: string, croppedAreaPixels: any) => {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.src = imageSrc;

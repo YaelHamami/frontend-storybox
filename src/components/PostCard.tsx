@@ -31,7 +31,7 @@ const PostCard = ({ post, username, userImage }: PostCardProps) => {
   const [showModal, setShowModal] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [commentsWithUsers, setcommentsWithUsers] = useState<Comment | withUser[]>([]);
+  const [commentsWithUsers, setcommentsWithUsers] = useState<(Comment & withUser)[]>([]);
   const [commentCount, setCommentCount] = useState(post.comment_count);
   const [isLiked, setIsLiked] = useState<boolean>(post.isLikedByMe);
   const [likeCount, setLikeCount] = useState<number>(post.like_count);
@@ -255,7 +255,7 @@ const PostCard = ({ post, username, userImage }: PostCardProps) => {
                 {commentsWithUsers.length > 0 ? (
                   commentsWithUsers.map((comment) => (
                     <div key={comment._id} className="d-flex align-items-start mb-2">
-                      <ProfilePicture imageUrl={comment.userImage} size={30} />
+                      <ProfilePicture imageUrl={comment.profile_picture_uri} size={30} />
                       <div className="ms-2 d-flex justify-content-between w-100">
                         <div>
                           <strong>{comment.username}</strong>

@@ -38,7 +38,7 @@ const HomePage = () => {
     const updatedPosts = await Promise.all(
       newPosts.map(async (post) => {
         const userResponse = await userService.getUserById(post.ownerId).request;
-        return { ...post, username: userResponse.data.userName, userImage: userResponse.data.profile_picture_uri };
+        return { ...post, username: userResponse.data.userName, profile_picture_uri: userResponse.data.profile_picture_uri };
       })
     );
 

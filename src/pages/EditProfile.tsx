@@ -12,13 +12,14 @@ import AuthInput from "../components/InputField";
 import ProfilePictureUploader from "../components/ProfilePictureUploader";
 import axios from "axios";
 
+// Update schema to reflect the Date type for date_of_birth
 const schema = z.object({
   userName: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Invalid email format"),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   phone_number: z.string().optional(),
-  date_of_birth: z.string().optional(),
+  date_of_birth: z.date().optional(),  // change to Date
   gender: z.string().optional(),
   profile_picture_uri: z.any().optional(),
 });
@@ -54,7 +55,10 @@ const EditProfile = () => {
         setValue("firstName", userData.firstName || "");
         setValue("lastName", userData.lastName || "");
         setValue("phone_number", userData.phone_number || "");
-        setValue("date_of_birth", userData.date_of_birth ? userData.date_of_birth.split("T")[0] : "");
+        
+        // Convert date_of_birth to a Date object
+        setValue("date_of_birth", userData.date_of_birth ? new Date(userData.date_of_birth) : undefined);
+
         setValue("gender", userData.gender || "");
         setLoading(false);
       });
@@ -71,10 +75,10 @@ const EditProfile = () => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      let imgUrl = profileImage  || "";
+      let imgUrl = profileImage || "";
       
-       // If a new image is selected, upload it
-       if (data.profile_picture_uri && data.profile_picture_uri.length > 0) {
+      // If a new image is selected, upload it
+      if (data.profile_picture_uri && data.profile_picture_uri.length > 0) {
         imgUrl = await uploadPhoto(data.profile_picture_uri[0]); // Upload and get URL
       }
 
@@ -103,7 +107,7 @@ const EditProfile = () => {
   return (
     <BaseContainer>
       <div className="d-flex flex-column align-items-center">
-      <div className="position-absolute" style={{  backgroundColor: "transparent", left: "calc(50% - 250px)" }}>
+      <div className="position-absolute" style={{ backgroundColor: "transparent", left: "calc(50% - 250px)" }}>
         <button className="btn border-0" onClick={() => navigate(`/profile/${userId}`)}>
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
