@@ -1,4 +1,7 @@
 
+import './App.css'
+import ConversationsPage from './pages/ConversationsPage'
+import ChatPage from './pages/ChatPage'
 import { Navigate, Route, Routes } from 'react-router-dom';
 import './App.css';
 import LoginForm from './pages/LoginForm';
@@ -25,6 +28,9 @@ function App() {
         <Route path="/profile/" element={<UserProfile />} />
         <Route path="/addPost" element={<AddPost />} />
         <Route path="/edit-post/:postId" element={<EditPostPage />} />
+        <Route path="/chat/:conversationId" element={<ChatPage />} />
+        <Route path="/conversations" element={<ConversationsPage/>} />
+
       </Routes>
     </>
   );

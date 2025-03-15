@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { date, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import userService, { IUser } from "../services/user-service";
 import { uploadPhoto } from "../services/file-service";
@@ -19,7 +19,6 @@ const schema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   phone_number: z.string().optional(),
-  date_of_birth: z.date().optional(),  // change to Date
   gender: z.string().optional(),
   profile_picture_uri: z.any().optional(),
 });
@@ -55,10 +54,6 @@ const EditProfile = () => {
         setValue("firstName", userData.firstName || "");
         setValue("lastName", userData.lastName || "");
         setValue("phone_number", userData.phone_number || "");
-        
-        // Convert date_of_birth to a Date object
-        setValue("date_of_birth", userData.date_of_birth ? new Date(userData.date_of_birth) : undefined);
-
         setValue("gender", userData.gender || "");
         setLoading(false);
       });
@@ -128,8 +123,6 @@ const EditProfile = () => {
           <AuthInput type="text" placeholder="Enter your last name" register={register("lastName")} />
           <label className="form-label fw-bold">phone number</label>
           <AuthInput type="tel" placeholder="Enter your phone number" register={register("phone_number")} />
-          <label className="form-label fw-bold">date of birth</label>
-          <AuthInput type="date" register={register("date_of_birth")} />
           <label className="form-label fw-bold">gender</label>
           <select className="form-control" {...register("gender")}>
             <option>Select Gender</option>

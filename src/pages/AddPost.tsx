@@ -77,7 +77,6 @@ const AddPostPage: FC = () => {
 
   return (
     <BaseContainer>
-      <h4 className="text-center mb-3" style={{ fontWeight: "bold", color: "#333" }}>Create a New Post</h4>
       <div className="d-flex justify-content-center">
         <div className="d-flex flex-row shadow-lg border-0" style={{ maxWidth: "900px", width: "100%", borderRadius: "16px", backgroundColor: "#ffffff" }}>
           <ImageUploader 

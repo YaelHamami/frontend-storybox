@@ -65,7 +65,7 @@ const RegistrationForm: FC = () => {
       const userId = loginResponse._id;
 
       if (userId) {
-        navigate(`/profile/${userId}`);
+        navigate(`/home`);
       } else {
         console.error("Failed to retrieve user ID after login.");
       }
@@ -106,7 +106,7 @@ const RegistrationForm: FC = () => {
 
       // Navigate to user profile if ID exists
       if (userId) {
-        navigate(`/profile/${userId}`);
+        navigate(`/home`);
       } else {
         console.error("Failed to retrieve user ID after Google login.");
       }

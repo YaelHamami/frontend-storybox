@@ -18,22 +18,34 @@ const NavBar = () => {
       </div>
       <ul className="navbar-right">
         <li>
-          <Link to="/home" className="navbar-link">
+          <Link
+            to="/home"
+            className={`navbar-link ${location.pathname === '/home' ? 'active' : ''}`}
+          >
             <FaHome className="navbar-icon" /> Home
           </Link>
         </li>
         <li>
-          <Link to="/conversations" className="navbar-link">
+          <Link
+            to="/conversations"
+            className={`navbar-link ${location.pathname === '/conversations' ? 'active' : ''}`}
+          >
             <FaComments className="navbar-icon" /> Conversations
           </Link>
         </li>
         <li>
-          <Link to="/profile/" className="navbar-link">
+          <Link
+            to="/profile/"
+            className={`navbar-link ${location.pathname === '/profile' ? 'active' : ''}`}
+          >
             <FaUser className="navbar-icon" /> Profile
           </Link>
         </li>
         <li>
-          <Link to="/addPost/" className="navbar-link">
+          <Link
+            to="/addPost/"
+            className={`navbar-link ${location.pathname === '/addPost' ? 'active' : ''}`}
+          >
             <FaPlus className="navbar-icon" /> Add Post
           </Link>
         </li>
