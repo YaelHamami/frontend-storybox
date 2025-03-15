@@ -80,8 +80,8 @@ const EditProfile = () => {
 
       const updatedUserData = { ...data, profile_picture_uri: imgUrl };
       await userService.updateUser(userId!, updatedUserData).request;
-      
-      navigate(`/profile/${userId}`);
+      console.log("Profile updated successfully!");
+      navigate(-1);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const errorMessage = error.response.data?.message || "Update failed";

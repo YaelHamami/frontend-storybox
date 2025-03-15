@@ -1,4 +1,4 @@
-// src/App.tsx
+
 import { Navigate, Route, Routes } from 'react-router-dom';
 import './App.css';
 import LoginForm from './pages/LoginForm';
@@ -7,6 +7,7 @@ import UserProfile from './pages/UserProfile';
 import EditProfile from './pages/EditProfile';
 import HomePage from './pages/HomePage';
 import NavBar from './components/NavBar'; // Import the NavBar component
+import AddPost from './pages/AddPost';
 
 function App() {
 
@@ -20,7 +21,8 @@ function App() {
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/profile/:userId" element={<UserProfile />} />
         <Route path="/profile/:userId/edit" element={<EditProfile />} />
-        {/* <Route path="/addPost" element={<AddPost />} /> */}
+        <Route path="/profile/" element={<UserProfile />} />
+        <Route path="/addPost" element={<AddPost />} />
       </Routes>
     </>
   );

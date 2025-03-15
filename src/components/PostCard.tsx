@@ -4,16 +4,15 @@ import { faHeart, faComment, faEllipsis, faTimes } from "@fortawesome/free-solid
 import ProfilePicture from "./ProiflePicture";
 import { Post } from "../services/post-service";
 import { addComment, fetchCommentsByPostId, Comment } from "../services/comments-service";
-import { addLike, removeLike } from "../services/like-service";
 import defaultPhoto from "../assets/OIP.png";
-import userService from "../services/user-service";
-import { Link } from "react-router-dom";
+import userService, { withUser } from "../services/user-service";
+import { Link, useNavigate } from "react-router-dom";
+import { addLike, removeLike } from "../services/like-service";
 
 interface PostCardProps {
   post: Post;
   username: string;
   userImage?: string;
-  showEditButton?: boolean;
 }
 
 const formatDateTime = (date?: string | Date) => {
@@ -28,15 +27,20 @@ const formatDateTime = (date?: string | Date) => {
   }).format(new Date(date));
 };
 
-const PostCard = ({ post, username, userImage, showEditButton}: PostCardProps) => {
+const PostCard = ({ post, username, userImage }: PostCardProps) => {
   const [showModal, setShowModal] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [commentsWithUsers, setcommentsWithUsers] = useState([]);
+  const [commentsWithUsers, setcommentsWithUsers] = useState<Comment | withUser []>([]);
   const [commentCount, setCommentCount] = useState(post.comment_count);
   const [isLiked, setIsLiked] = useState<boolean>(post.isLikedByMe);
   const [likeCount, setLikeCount] = useState<number>(post.like_count);
+  const [showFullTags, setShowFullTags] = useState(false);
+  const [showEditButton, setShowEditButton] = useState(false);
 
+  const navigate = useNavigate();
+
+  const toggleTags = () => setShowFullTags(!showFullTags);
 
   useEffect(() => {
     if (showModal) {
@@ -79,7 +83,21 @@ const PostCard = ({ post, username, userImage, showEditButton}: PostCardProps) =
     }
   };
 
-  const handleLike = async () => {
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const myUser = await userService.getMe().request;
+        setShowEditButton(myUser.data._id === post.ownerId);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+  
+    fetchUser();
+  }, []); // Dependency array remains empty if it runs only on mount
+      
+      
+ const handleLike = async () => {
     if (isLiked) {
       setIsLiked(false);
       setLikeCount((prev) => Math.max(prev - 1, 0));
@@ -104,6 +122,7 @@ const PostCard = ({ post, username, userImage, showEditButton}: PostCardProps) =
       }
     }
   };
+  
 
   return (
     <>
@@ -120,11 +139,15 @@ const PostCard = ({ post, username, userImage, showEditButton}: PostCardProps) =
 
            {/* Three-Dot Menu (Aligned Right) */}
            {showEditButton && (
-           <button className="btn p-0 ms-auto" style={{ background: "none", border: "none", cursor: "pointer" }}>
-            <FontAwesomeIcon icon={faEllipsis} className="text-muted" size="lg" />
-           </button>
+            <button
+             className="btn p-0 ms-auto"
+             style={{ background: "none", border: "none", cursor: "pointer" }}
+             onClick={() => navigate(`/edit-post/${post._id}`)} // ✅ Navigate on click
+             >
+             <FontAwesomeIcon icon={faEllipsis} className="text-muted" size="lg" />
+            </button>
            )}
-          </div>
+           </div>
 
           {/* Post Image */}
           <div style={{ width: "100%", height: "200px", overflow: "hidden", backgroundColor: "#f0f0f0" }}>
@@ -146,20 +169,34 @@ const PostCard = ({ post, username, userImage, showEditButton}: PostCardProps) =
 
             {/* Tags */}
             {post.tags?.length ? (
-              <div className="mt-1">
-                {post.tags.map((tag, index) => (
-                  <small key={index} className="text-primary me-2">#{tag}</small>
-                ))}
-              </div>
-            ) : null}
+             <div 
+             className="mt-1 text-primary"
+               style={{
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+             WebkitLineClamp: showFullTags ? "unset" : 2,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              cursor: "pointer",
+              whiteSpace: showFullTags ? "normal" : "nowrap",
+              }}
+              onClick={toggleTags}
+                >
+             {post.tags.map((tag, index) => (
+             <small key={index} className="me-2">#{tag}</small>
+             ))}
+         </div>
+        ) : null}
 
-            {/* Like & Comment Section */}
+
+           {/* Like & Comment Section */}
             <div className="d-flex align-items-center mt-2" style={{ gap: "15px" }}>
             <button className="btn d-flex align-items-center p-0" style={{ border: "none", background: "none", cursor: "pointer" }} onClick={handleLike}>
               <FontAwesomeIcon icon={faHeart} className={isLiked ? "text-danger me-1" : "text-muted me-1"} />
               <span>{likeCount}</span>
             </button>
-
+              
+              
               {/* Open Comments Popup Button */}
               <button className="btn d-flex align-items-center p-0" style={{ border: "none", background: "none", cursor: "pointer" }}
                 onClick={() => setShowModal(true)}>

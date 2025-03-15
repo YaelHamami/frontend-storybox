@@ -19,6 +19,11 @@ export interface IUser {
     refreshToken?: string[];
   }
 
+  export interface withUser {
+    username: string
+    profile_picture_uri: string;
+  }
+
 export const getAllUsers = () => {
     const abortController = new AbortController();
     const request = apiClient.get<IUser[]>('/users', { signal: abortController.signal })
@@ -33,13 +38,13 @@ export const getUserById = (id: string) => {
   return { request, abort: () => abortController.abort() };
 };
 
-// Update User by ID
-// export const updateUser = (id: string, updatedUserData: Partial<IUser>) => {
-//   const abortController = new AbortController();
-//   const request = apiClient.put<IUser>(`/users/${id}`, updatedUserData, { signal: abortController.signal });
+export const getMe = () => {
+  const abortController = new AbortController();
+  const request = apiClient.get<IUser>(`users/self/me`, { signal: abortController.signal });
 
-//   return { request, abort: () => abortController.abort() };
-// };
+  return { request, abort: () => abortController.abort() };
+};
+
 
 export const updateUser = (userId: string, updatedUserData: Partial<IUser>) => {
   console.log(`Updating user with ID: ${userId}`);
@@ -66,4 +71,4 @@ export const deleteUser = (id: string) => {
   return { request, abort: () => abortController.abort() };
 };
 
-export default { getAllUsers, getUserById, updateUser, deleteUser };
+export default { getAllUsers, getUserById, updateUser, deleteUser, getMe };

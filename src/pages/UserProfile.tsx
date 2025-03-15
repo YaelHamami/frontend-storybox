@@ -7,7 +7,7 @@ import UserProfileHeader from "../components/UserProfileHeader";
 import PostCard from "../components/PostCard";
 
 const UserProfile = () => {
-  const { userId } = useParams<{ userId: string }>();
+  const { userId } = useParams<{ userId?: string }>();
   const [user, setUser] = useState<IUser | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,12 @@ const UserProfile = () => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
-        const userResponse = await userService.getUserById(userId!).request;
+        let userResponse;
+        if(userId) {
+          userResponse = await userService.getUserById(userId!).request;
+        } else {
+          userResponse = await userService.getMe().request;
+        }
         setUser(userResponse.data);
         const postResponse = await postService.fetchPaginatedPosts(1, userId).request;
         setPosts(postResponse.data.posts);
@@ -27,8 +32,8 @@ const UserProfile = () => {
       }
     };
 
-    if (userId) fetchUserData();
-  }, [userId]);
+    fetchUserData();
+  }, []);
 
   return (
     <BaseContainer>
@@ -46,7 +51,7 @@ const UserProfile = () => {
         /* If posts exist, display them */
         <div className="row">
           {posts.map(post => (
-            <PostCard key={post._id} post={post} username={user!.userName} userImage={user!.profile_picture_uri} showEditButton={true} />
+            <PostCard key={post._id} post={post} username={user!.userName} userImage={user!.profile_picture_uri} />
           ))}
         </div>
       )}

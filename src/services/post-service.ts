@@ -1,4 +1,5 @@
 import apiClient from "./api-client";
+import { getGenres } from "./genres-service";
 
 export interface Post {
   _id: string;
@@ -44,23 +45,51 @@ export const fetchPostById = (id: string) => {
   
     return { request, cancel: () => controller.abort() };
   };
-  
-  // Create a new post
-  export const createPost = (post: { title: string; content: string }) => {
-    console.log("Creating a new post...");
-    const controller = new AbortController();
-    const request = apiClient.post<Post>("/posts", post, { signal: controller.signal });
-  
+
+
+// Create a new post with auto-generated tags
+export const createPost = async (post: { content: string; image_uri: string }) => {
+  console.log("Generating tags and creating a new post...");
+  const controller = new AbortController();
+
+  try {
+    // Fetch genres for the post content
+    const tags = await getGenres(post.content);
+    
+    const request = apiClient.post<Post>("/posts", { ...post, tags }, {
+      signal: controller.signal,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // Pass JWT token here
+      }
+    });
+
     return { request, cancel: () => controller.abort() };
-  };
-  
+  } catch (error) {
+    console.error("Error creating post:", error);
+    throw error;
+  }
+};
+
   // Update an existing post by ID
-  export const updatePost = (id: string, updatedPostData: Partial<Post>) => {
+  export const updatePost = async (id: string, updatedPostData: Partial<Post>) => {
     console.log(`Updating post with ID: ${id}`);
     const controller = new AbortController();
-    const request = apiClient.put<Post>(`/posts/${id}`, updatedPostData, { signal: controller.signal });
+
+    try {
+      // Fetch genres for the post content
+      if(updatedPostData.content){
+        const tags = await getGenres(updatedPostData.content);
+        updatedPostData.tags = tags
+      }
+    
+      const request = apiClient.put<Post>(`/posts/${id}`, updatedPostData, { signal: controller.signal });
+      return { request, cancel: () => controller.abort() };
+
+    } catch (error) {
+      console.error("Error creating post:", error);
+      throw error;
+    }
   
-    return { request, cancel: () => controller.abort() };
   };
   
   // Delete a post by ID

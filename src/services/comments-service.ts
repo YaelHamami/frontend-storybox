@@ -9,6 +9,7 @@ export interface Comment {
   updated_at?: Date;
 }
 
+
 // Fetch a comment by postID
 export const fetchCommentsByPostId = (id: string) => {
     console.log(`Fetching comments with PostID: ${id}`);
