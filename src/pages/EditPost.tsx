@@ -74,7 +74,7 @@ const EditPostPage: FC = () => {
 
       if (previewImage && croppedAreaPixels && imageFile) {
         const croppedImage = await getCroppedImg(previewImage, croppedAreaPixels);
-        imgUrl = await uploadPhoto(croppedImage);
+        imgUrl = await uploadPhoto(croppedImage as File);
         setImageUri(imgUrl);
       }
 

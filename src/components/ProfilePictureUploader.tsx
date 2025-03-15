@@ -7,6 +7,8 @@ import { UseFormRegisterReturn } from "react-hook-form";
 interface ProfilePictureUploaderProps {
   watchImage: FileList | string | undefined;
   register: UseFormRegisterReturn;
+  onFileChange?: (fileList: FileList | null) => void;
+
 }
 
 const ProfilePictureUploader: FC<ProfilePictureUploaderProps> = ({ watchImage, register }) => {

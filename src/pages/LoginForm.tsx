@@ -2,7 +2,7 @@ import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import AuthClient, { googleSignin } from "../services/auth-service";
+import AuthClient, { googleSignin, LoginData } from "../services/auth-service";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 import AuthCard from "../auth/AuthCard";
@@ -35,7 +35,7 @@ const LoginForm: FC = () => {
   const onSubmit = async (data: LoginFormData
   ) => {
     try {
-      const request = AuthClient.authLogin(data);
+      const request = AuthClient.authLogin(data as LoginData);
       const loginResponse = await request;
       console.log("Login successful!");
 

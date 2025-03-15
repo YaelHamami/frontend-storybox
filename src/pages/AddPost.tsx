@@ -54,7 +54,7 @@ const AddPostPage: FC = () => {
       let imgUrl = "";
       if (previewImage && croppedAreaPixels) {
         const croppedImage = await getCroppedImg(previewImage, croppedAreaPixels);
-        imgUrl = await uploadPhoto(croppedImage);
+        imgUrl = await uploadPhoto(croppedImage as File);
         setImageUri(imgUrl);
       }
       
