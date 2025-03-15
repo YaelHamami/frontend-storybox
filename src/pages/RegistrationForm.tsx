@@ -75,9 +75,9 @@ const RegistrationForm: FC = () => {
       if (axios.isAxiosError(error) && error.response) {
         const errorMessage = error.response.data?.message || "Registration failed";
   
-        console.log("🔹 Server Error Message:", errorMessage); // Debugging
+        console.log("Server Error Message:", errorMessage); // Debugging
   
-        // 🔹 Ensure a visible error message in all cases
+        // Ensure a visible error message in all cases
         if (axios.isAxiosError(error) && error.response) {
           const errorMessage = error.response.data?.message || "Registration failed";
           console.log("🔹 Server Error Message:", errorMessage);
