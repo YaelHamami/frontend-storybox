@@ -21,6 +21,7 @@ function App() {
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/profile/:userId" element={<UserProfile />} />
         <Route path="/profile/:userId/edit" element={<EditProfile />} />
+        <Route path="/profile" element={<EditProfile />} />
         <Route path="/addPost" element={<AddPost />} />
       </Routes>
     </>
