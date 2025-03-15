@@ -87,7 +87,7 @@ const PostCard = ({ post, username, userImage }: PostCardProps) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const myUser = await userService.getMe().request;
+        const myUser = await userService.getCurrentUser().request;
         setShowEditButton(myUser.data._id === post.ownerId);
       } catch (error) {
         console.error("Error fetching user:", error);

@@ -16,7 +16,7 @@ const UserProfileHeader = ({ user }: UserProfileHeaderProps) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const myUser = await userService.getMe().request;
+        const myUser = await userService.getCurrentUser().request;
         setShowEditButton(myUser.data._id === user._id);
       } catch (error) {
         console.error("Error fetching user:", error);

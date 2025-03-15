@@ -29,6 +29,8 @@ function App() {
         <Route path="/addPost" element={<AddPost />} />
         <Route path="/edit-post/:postId" element={<EditPostPage />} />
         <Route path="/chat/:conversationId" element={<ChatPage />} />
+        <Route path="/conversations" element={<ConversationsPage/>} />
+
       </Routes>
     </>
   );
