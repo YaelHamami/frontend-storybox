@@ -21,7 +21,7 @@ export interface IUser {
 
   export interface withUser {
     username: string
-    profile_picture_uri?: string;
+    profile_picture_uri: string;
   }
 
 export const getAllUsers = () => {
