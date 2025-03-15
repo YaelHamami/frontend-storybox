@@ -7,10 +7,12 @@ import UserProfile from './pages/UserProfile';
 import EditProfile from './pages/EditProfile';
 import HomePage from './pages/HomePage';
 import NavBar from './components/NavBar'; // Import the NavBar component
+import AddPost from './pages/AddPost';
 
 function App() {
 
   return (
+    <>
       <NavBar /> {/* NavBar will be conditionally shown based on the route */}
       <Routes>
         <Route path="/" element={<Navigate replace to="/login" />} />
@@ -19,7 +21,7 @@ function App() {
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/profile/:userId" element={<UserProfile />} />
         <Route path="/profile/:userId/edit" element={<EditProfile />} />
-        {/* <Route path="/addPost" element={<AddPost />} /> */}
+        <Route path="/addPost" element={<AddPost />} />
       </Routes>
     </>
   );
