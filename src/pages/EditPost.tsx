@@ -4,7 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useParams } from "react-router-dom";
 import BaseContainer from "../components/BaseContainer";
-import { fetchPostById, updatePost } from "../services/post-service";
+import { deletePost, fetchPostById, updatePost } from "../services/post-service";
 import { uploadPhoto } from "../services/file-service";
 import getCroppedImg from "../utils/cropImage";
 import ImageUploader from "../components/ImageUploader";
@@ -88,6 +88,20 @@ const EditPostPage: FC = () => {
       setLoading(false);
     }
   };
+  
+  const handleDeletePost = async() => {
+    setLoading(true);
+    try {
+      await deletePost(postId as string);
+      console.log("Post deleted successfully!");
+      navigate(-1);
+    } catch (error) {
+      console.error("Error updating post:", error);
+    } finally {
+      setLoading(false);
+    }
+
+  }
 
   return (
     <BaseContainer>
@@ -115,6 +129,7 @@ const EditPostPage: FC = () => {
             loading={loading}
             content={content}
             isEdit={true}
+            handleDeletePost={handleDeletePost}
           />
         </div>
       </div>
