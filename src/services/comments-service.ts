@@ -9,7 +9,7 @@ export interface Comment {
   updated_at?: Date;
 }
 
-// Fetch a post by ID
+// Fetch a comment by postID
 export const fetchCommentsByPostId = (id: string) => {
     console.log(`Fetching comments with PostID: ${id}`);
     const controller = new AbortController();
@@ -18,7 +18,7 @@ export const fetchCommentsByPostId = (id: string) => {
     return { request, cancel: () => controller.abort() };
   };
   
-  // Create a new post
+  // Create a new comment
   export const addComment = (postId:string, comment: string) => {
     console.log("Creating a new comment...");
     const controller = new AbortController();
