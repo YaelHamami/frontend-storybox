@@ -77,8 +77,6 @@ const HomePage = () => {
 
   return (
     <BaseContainer>
-      <h4 className="mb-3 text-center">Home Page</h4>
-
       {postsWithUsers.length === 0 && !loading ? (
         <p className="text-center text-muted">This user hasn't posted anything yet.</p>
       ) : (

@@ -43,8 +43,6 @@ const ConversationsPage = () => {
 
   return (
     <div className="container mt-4">
-      <h2 className="text-center mb-4">Your Conversations</h2>
-
       {loading ? (
         <p className="text-center text-muted">Loading conversations...</p>
       ) : conversations.length === 0 ? (
