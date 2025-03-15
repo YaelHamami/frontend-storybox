@@ -6,11 +6,9 @@ import UserProfile from './pages/UserProfile'
 import EditProfile from './pages/EditProfile'
 import AddPost from "./pages/AddPost"
 import HomePage from './pages/HomePage'
-import NavBar from './components/NavBar'; /
+import NavBar from './components/NavBar'; 
 
 function App() {
-  const location = useLocation();
-
   return (
     <>
       <NavBar /> {/* NavBar will be conditionally shown based on the route */}
