@@ -17,7 +17,14 @@ export interface IUser {
     provider?: string | null;
     gender?: string | null;
     refreshToken?: string[];
-}
+  }
+
+  export interface withUser {
+    username: string
+    profile_picture_uri: string;
+  }
+
+
 
 // Get all users
 export const getAllUsers = () => {
@@ -38,13 +45,8 @@ export const getUserById = (id: string) => {
 // Get current logged-in user
 export const getCurrentUser = () => {
     const abortController = new AbortController();
-    const request = apiClient.get<IUser>('/users/self/me', { 
-        signal: abortController.signal,
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Attach token
-        },
-    });
-
+    const request = apiClient.get<IUser>(`users/self/me`, { signal: abortController.signal });
+  
     return { request, abort: () => abortController.abort() };
 };
 
@@ -74,4 +76,6 @@ export const deleteUser = (id: string) => {
     return { request, abort: () => abortController.abort() };
 };
 
+
 export default { getAllUsers, getUserById, getCurrentUser, updateUser, deleteUser };
+
