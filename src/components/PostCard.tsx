@@ -63,7 +63,7 @@ const PostCard = ({ post, username, userImage }: PostCardProps) => {
       const updatedComments = await Promise.all(
         comments.map(async (comment: Comment) => {
           const userResponse = await userService.getUserById(comment.ownerId).request;
-          return { ...comment, username: userResponse.data.userName, userImage: userResponse.data.profile_picture_uri };
+          return { ...comment, username: userResponse.data.userName, profile_picture_uri: userResponse.data.profile_picture_uri };
         })
       );
       setcommentsWithUsers(updatedComments);
