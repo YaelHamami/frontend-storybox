@@ -8,11 +8,11 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "serve -s dist -l 3000",
-    "start:pm2": "pm2 start 'serve -s dist -l 3000' --name StoryBox-Client --watch",
-    "start:iptables": "sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3000",
+    "start": "serve -s dist -l 80",
+    "start:pm2": "pm2 start 'serve -s dist -l 80' --name StoryBox-Client --watch",
+    "start:iptables": "sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 80",
     "build:prod": "tsc -b && vite build --mode production",
-    "deploy": "npm run build && npm run start:iptables  && npm run start:pm2 ",
+    "deploy": "cp .envprod .env && npm run build:prod && start:iptables && npm run start:pm2 ",
     "predeploy": "npm run build",
     "deployCheck": "gh-pages -d dist",
     "init": "npm install"
@@ -34,6 +34,7 @@
     "react-hook-form": "^7.54.2",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.3.0",
+    "serve": "^14.2.4",
     "socket.io-client": "^4.8.1",
     "zod": "^3.24.2"
   },
