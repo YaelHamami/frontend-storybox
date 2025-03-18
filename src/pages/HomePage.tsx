@@ -78,7 +78,7 @@ const HomePage = () => {
   return (
     <BaseContainer>
       {postsWithUsers.length === 0 && !loading ? (
-        <p className="text-center text-muted">This user hasn't posted anything yet.</p>
+        <p className="text-center text-muted">There are no posts. Be the first!</p>
       ) : (
         <div className="row">
           {postsWithUsers.map((post) => (
