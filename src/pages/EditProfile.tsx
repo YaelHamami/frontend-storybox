@@ -73,7 +73,7 @@ const EditProfile = () => {
       let imgUrl = profileImage || "";
       
       // If a new image is selected, upload it
-      if (data.profile_picture_uri && data.profile_picture_uri.length > 0) {
+      if (data.profile_picture_uri && data.profile_picture_uri.length === 1) {
         imgUrl = await uploadPhoto(data.profile_picture_uri[0]); // Upload and get URL
       }
 
